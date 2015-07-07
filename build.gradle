@@ -1,0 +1,72 @@
+buildscript {
+    ext {
+        springBootVersion = '1.2.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+         jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
+         classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.4'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply from: './properties.gradle' 
+apply plugin: 'io.spring.dependency-management' 
+
+apply plugin: 'info.solidsoft.pitest'
+
+pitest {
+    enableDefaultIncrementalAnalysis = true
+   // targetClasses = ['pl.java.scalatech.*']
+    pitestVersion = "1.1.4"
+    threads = 8
+    outputFormats = ['XML', 'HTML']
+    excludedMethods = ['equals', 'hashCode']
+    jvmArgs = ['-Xmx2048m']
+}
+
+
+jar {
+    baseName = 'pit'
+    version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+     maven {
+        url "http://repo.codahale.com/"
+    }
+      jcenter()
+}
+
+
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-aop")
+    compile("org.springframework.boot:spring-boot-starter-logging")
+    compile ("com.google.guava:guava:latest.release") 
+    compile ("org.projectlombok:lombok:latest.release")
+    testCompile("org.hamcrest:hamcrest-all:$hamcrestVersion")
+    testCompile("org.mockito:mockito-all:$mockitoVersion")
+    testCompile("junit:junit:$junitVersion")
+    testCompile("org.easytesting:fest-assert:${festAssertVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test") 
+          
+}
+
+
+println "Using Spring Boot version: [$springBootVersion]"
+println "Using Java version: [" + System.getProperty("java.version") + "]"
+
+
+task wrapper(type: Wrapper) {
+
+}
